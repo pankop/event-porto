@@ -21,7 +21,7 @@ type Account struct {
 	Password        string         `json:"password"`
 	Role            string         `json:"role"`
 	IsEmailVerified bool           `json:"is_verified"`
-	AccountDetails  AccountDetails `gorm:"foreignKey:Account_ID"`
+	AccountDetails  AccountDetails `gorm:"foreignKey:account_id;references:account_id"`
 
 	Timestamp
 }
