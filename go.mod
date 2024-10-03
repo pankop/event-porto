@@ -1,4 +1,4 @@
-module github.com/github.com/pankop/event-porto
+module github.com/pankop/event-porto
 
 go 1.21
 
