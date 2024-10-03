@@ -6,7 +6,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/Caknoooo/go-gin-clean-starter/entity"
+	"github.com/pankop/event-porto/entity"
 	"gorm.io/gorm"
 )
 

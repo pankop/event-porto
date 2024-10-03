@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/Caknoooo/go-gin-clean-starter/migrations"
+	"github.com/pankop/event-porto/migrations"
 	"gorm.io/gorm"
 )
 

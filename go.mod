@@ -1,4 +1,4 @@
-module github.com/Caknoooo/go-gin-clean-starter
+module github.com/github.com/pankop/event-porto
 
 go 1.21
 

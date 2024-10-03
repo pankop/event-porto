@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Caknoooo/go-gin-clean-starter/constants"
 	"github.com/joho/godotenv"
+	"github.com/pankop/go-gin-clean-starter/constants"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

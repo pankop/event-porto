@@ -1,10 +1,10 @@
 package routes
 
 import (
-	"github.com/Caknoooo/go-gin-clean-starter/controller"
-	"github.com/Caknoooo/go-gin-clean-starter/middleware"
-	"github.com/Caknoooo/go-gin-clean-starter/service"
 	"github.com/gin-gonic/gin"
+	"github.com/pankop/event-porto/controller"
+	"github.com/pankop/event-porto/middleware"
+	"github.com/pankop/event-porto/service"
 )
 
 func User(route *gin.Engine, userController controller.UserController, jwtService service.JWTService) {

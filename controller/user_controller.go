@@ -3,10 +3,10 @@ package controller
 import (
 	"net/http"
 
-	"github.com/Caknoooo/go-gin-clean-starter/dto"
-	"github.com/Caknoooo/go-gin-clean-starter/service"
-	"github.com/Caknoooo/go-gin-clean-starter/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/pankop/event-porto/dto"
+	"github.com/pankop/event-porto/service"
+	"github.com/pankop/event-porto/utils"
 )
 
 type (

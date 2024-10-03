@@ -6,11 +6,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/Caknoooo/go-gin-clean-starter/controller"
-	"github.com/Caknoooo/go-gin-clean-starter/entity"
-	"github.com/Caknoooo/go-gin-clean-starter/repository"
-	"github.com/Caknoooo/go-gin-clean-starter/service"
 	"github.com/gin-gonic/gin"
+	"github.com/pankop/event-porto/controller"
+	"github.com/pankop/event-porto/entity"
+	"github.com/pankop/event-porto/repository"
+	"github.com/pankop/event-porto/service"
 	"github.com/stretchr/testify/assert"
 )
 

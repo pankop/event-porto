@@ -4,13 +4,13 @@ import (
 	"log"
 	"os"
 
-	"github.com/Caknoooo/go-gin-clean-starter/cmd"
-	"github.com/Caknoooo/go-gin-clean-starter/config"
-	"github.com/Caknoooo/go-gin-clean-starter/controller"
-	"github.com/Caknoooo/go-gin-clean-starter/middleware"
-	"github.com/Caknoooo/go-gin-clean-starter/repository"
-	"github.com/Caknoooo/go-gin-clean-starter/routes"
-	"github.com/Caknoooo/go-gin-clean-starter/service"
+	"github.com/pankop/event-porto/cmd"
+	"github.com/pankop/event-porto/config"
+	"github.com/pankop/event-porto/controller"
+	"github.com/pankop/event-porto/middleware"
+	"github.com/pankop/event-porto/repository"
+	"github.com/pankop/event-porto/routes"
+	"github.com/pankop/event-porto/service"
 
 	"github.com/gin-gonic/gin"
 )

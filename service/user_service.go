@@ -10,13 +10,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Caknoooo/go-gin-clean-starter/constants"
-	"github.com/Caknoooo/go-gin-clean-starter/dto"
-	"github.com/Caknoooo/go-gin-clean-starter/entity"
-	"github.com/Caknoooo/go-gin-clean-starter/helpers"
-	"github.com/Caknoooo/go-gin-clean-starter/repository"
-	"github.com/Caknoooo/go-gin-clean-starter/utils"
 	"github.com/google/uuid"
+	"github.com/pankop/event-porto/constants"
+	"github.com/pankop/event-porto/dto"
+	"github.com/pankop/event-porto/entity"
+	"github.com/pankop/event-porto/helpers"
+	"github.com/pankop/event-porto/repository"
+	"github.com/pankop/event-porto/utils"
 )
 
 type (

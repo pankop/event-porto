@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"github.com/Caknoooo/go-gin-clean-starter/constants"
+	"github.com/pankop/event-porto/constants"
 )
 
 type Payments struct {

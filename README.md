@@ -29,10 +29,10 @@ Clean Architecture proposes a structured application design with several layers 
 There are 2 ways to do running
 ### With Docker
 1. Copy the example environment file and configure it:
-  ```bash 
+  ```bash
   cp.env.example .env
   ```
-2. Build Docker 
+2. Build Docker
   ```bash
   docker-compose build --no-cache
   ```
@@ -44,7 +44,7 @@ There are 2 ways to do running
 ### Without Docker
 1. Clone the repository or **Use This Template**
   ```bash
-  git clone https://github.com/Caknoooo/go-gin-clean-starter.git
+  git clone https://github.com/pankop/event-porto.git
   ```
 2. Navigate to the project directory:
   ```bash
@@ -74,7 +74,7 @@ There are 2 ways to do running
     \c your_database
     CREATE EXTENSION IF NOT EXISTS "uuid-ossp"; // remove default:uuid_generate_v4() if you not use you can uncomment code in user_entity.go
     \q
-    ``` 
+    ```
 6. Run the application:
   ```bash
   go run main.go
@@ -87,14 +87,14 @@ To run migrations and seed the database, use the following commands:
 go run main.go --migrate --seed
 ```
 
-#### Migrate Database 
-To migrate the database schema 
+#### Migrate Database
+To migrate the database schema
 ```bash
 go run main.go --migrate
 ```
 This command will apply all pending migrations to your PostgreSQL database specified in `.env`
 
-#### Seeder Database 
+#### Seeder Database
 To seed the database with initial data:
 ```bash
 go run main.go --seed
