@@ -6,7 +6,6 @@ import (
 
 type Payments struct {
 	Payment_ID int64 `gorm:"primary_key;column:payment_id"`
-
 	Amount             int64                   `json:"amount"`
 	Payment_Proof      string                  `json:"payment_proof"`
 	Bank_Transfer_From string                  `json:"bank_transfer_from"`
