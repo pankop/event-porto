@@ -2,8 +2,9 @@ package dto
 
 import (
 	"errors"
-	"mime/multipart"
 
+	"github.com/google/uuid"
+	"github.com/pankop/event-porto/constants"
 	"github.com/pankop/event-porto/entity"
 )
 
@@ -56,21 +57,21 @@ var (
 
 type (
 	UserCreateRequest struct {
-		Name       string                `json:"name" form:"name"`
-		TelpNumber string                `json:"telp_number" form:"telp_number"`
-		Email      string                `json:"email" form:"email"`
-		Image      *multipart.FileHeader `json:"image" form:"image"`
-		Password   string                `json:"password" form:"password"`
+		Name         string            `json:"name" form:"name"`
+		Email        string            `json:"email" form:"email"`
+		Password     string            `json:"password" form:"password"`
+		Phone_Number string            `json:"phone_numberhone_Number" form:"phone_number"`
+		Jenjang      constants.Jenjang `json:"jenjang" form:"jenjang"`
 	}
 
 	UserResponse struct {
-		ID         string `json:"id"`
-		Name       string `json:"name"`
-		Email      string `json:"email"`
-		TelpNumber string `json:"telp_number"`
-		Role       string `json:"role"`
-		ImageUrl   string `json:"image_url"`
-		IsVerified bool   `json:"is_verified"`
+		ID              string `json:"id"`
+		Name            string `json:"name"`
+		Email           string `json:"email"`
+		Phone_Number    string `json:"phone_number"`
+		Jenjang         string `json:"jenjang"`
+		IsEmailVerified bool   `json:"is_verified"`
+		Role            string `json:"role"`
 	}
 
 	UserPaginationResponse struct {
@@ -79,7 +80,7 @@ type (
 	}
 
 	GetAllUserRepositoryResponse struct {
-		Users []entity.User
+		Users []entity.Account
 		PaginationResponse
 	}
 
@@ -117,8 +118,13 @@ type (
 	}
 
 	UserLoginResponse struct {
-		Token string `json:"token"`
-		Role  string `json:"role"`
+		ID           uuid.UUID         `gorm:"type:uuid;primary_key;default:uuid_generate_v4()" json:"id"`
+		Nama         string            `json:"name"`
+		Email        string            `json:"email"`
+		Phone_Number string            `json:"phone_number"`
+		Jenjang      constants.Jenjang `json:"jenjang"`
+		Role         string            `json:"role"`
+		Token        string            `json:"token"`
 	}
 
 	UpdateStatusIsVerifiedRequest struct {

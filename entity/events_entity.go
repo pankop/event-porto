@@ -11,5 +11,5 @@ type Events struct {
 	Price            int                `json:"price"`
 	Start_Date       time.Time          `json:"start_date"`
 	End_Date         time.Time          `json:"end_date"`
-	EventRegistrants []EventRegistrants `gorm:"foreignKey:regristant_id;references:regristant_idegristant_ID"`
+	EventRegistrants []EventRegistrants `gorm:"foreignKey:registrant_id;references:registrant_idegristant_ID"`
 }

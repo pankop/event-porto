@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/pankop/go-gin-clean-starter/constants"
+	"github.com/pankop/event-porto/constants"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
