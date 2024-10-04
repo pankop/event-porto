@@ -3,15 +3,12 @@ package service
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"html/template"
 	"os"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/google/uuid"
-	"github.com/pankop/event-porto/constants"
 	"github.com/pankop/event-porto/dto"
 	"github.com/pankop/event-porto/entity"
 	"github.com/pankop/event-porto/helpers"
@@ -58,31 +55,20 @@ func (s *userService) RegisterUser(ctx context.Context, req dto.UserCreateReques
 	mu.Lock()
 	defer mu.Unlock()
 
-	var filename string
-
 	_, flag, _ := s.userRepo.CheckEmail(ctx, nil, req.Email)
 	if flag {
 		return dto.UserResponse{}, dto.ErrEmailAlreadyExists
 	}
 
-	if req.Image != nil {
-		imageId := uuid.New()
-		ext := utils.GetExtensions(req.Image.Filename)
-
-		filename = fmt.Sprintf("profile/%s.%s", imageId, ext)
-		if err := utils.UploadFile(req.Image, filename); err != nil {
-			return dto.UserResponse{}, err
-		}
-	}
-
-	user := entity.User{
-		Name:       req.Name,
-		TelpNumber: req.TelpNumber,
-		ImageUrl:   filename,
-		Role:       constants.Jenjang,
-		Email:      req.Email,
-		Password:   req.Password,
-		IsVerified: false,
+	user := entity.Account{
+		Email:           req.Email,
+		Password:        req.Password,
+		IsEmailVerified: false,
+		AccountDetails: entity.AccountDetails{
+			Name:         req.Name,
+			Phone_Number: req.Phone_Number,
+			Jenjang:      req.Jenjang,
+		},
 	}
 
 	userReg, err := s.userRepo.RegisterUser(ctx, nil, user)
@@ -101,13 +87,12 @@ func (s *userService) RegisterUser(ctx context.Context, req dto.UserCreateReques
 	}
 
 	return dto.UserResponse{
-		ID:         userReg.ID.String(),
-		Name:       userReg.Name,
-		TelpNumber: userReg.TelpNumber,
-		ImageUrl:   userReg.ImageUrl,
-		Role:       userReg.Role,
-		Email:      userReg.Email,
-		IsVerified: userReg.IsVerified,
+		ID:              userReg.ID.String(),
+		Name:            userReg.AccountDetails.Name,
+		Phone_Number:    userReg.AccountDetails.Phone_Number,
+		Email:           userReg.Email,
+		IsEmailVerified: userReg.IsEmailVerified,
+		Role:            "User",
 	}, nil
 }
 
@@ -145,7 +130,7 @@ func makeVerificationEmail(receiverEmail string) (map[string]string, error) {
 	}
 
 	draftEmail := map[string]string{
-		"subject": "Cakno - Go Gin Template",
+		"subject": "pankop - Verification Email",
 		"body":    strMail.String(),
 	}
 
@@ -203,13 +188,13 @@ func (s *userService) VerifyEmail(ctx context.Context, req dto.VerifyEmailReques
 		return dto.VerifyEmailResponse{}, dto.ErrUserNotFound
 	}
 
-	if user.IsVerified {
+	if user.IsEmailVerified {
 		return dto.VerifyEmailResponse{}, dto.ErrAccountAlreadyVerified
 	}
 
-	updatedUser, err := s.userRepo.UpdateUser(ctx, nil, entity.User{
-		ID:         user.ID,
-		IsVerified: true,
+	updatedUser, err := s.userRepo.UpdateUser(ctx, nil, entity.Account{
+		ID:              user.ID,
+		IsEmailVerified: true,
 	})
 	if err != nil {
 		return dto.VerifyEmailResponse{}, dto.ErrUpdateUser
@@ -217,7 +202,7 @@ func (s *userService) VerifyEmail(ctx context.Context, req dto.VerifyEmailReques
 
 	return dto.VerifyEmailResponse{
 		Email:      email,
-		IsVerified: updatedUser.IsVerified,
+		IsVerified: updatedUser.IsEmailVerified,
 	}, nil
 }
 

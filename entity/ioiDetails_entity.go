@@ -14,5 +14,5 @@ type IoIDetails struct {
 	ImgIdentity        string             `json:"img_identity"`
 	ImgFollowInstagram string             `json:"img_follow_instagram"`
 	Link_Twibbon       string             `json:"link_twibbon"`
-	Regristant_ID      []EventRegistrants `gorm:"foreignKey:regristant_id;references:regristant_id"`
+	registrant_ID      []EventRegistrants `gorm:"foreignKey:registrant_id;references:registrant_id"`
 }
