@@ -10,18 +10,15 @@ type Role string
 type PaymentStatus string
 type Role_IOI string
 
-const (
-	Leader Role_IOI = "leader"
-	Member Role_IOI = "member"
-)
+
 
 type Account struct {
 	ID              uuid.UUID      `gorm:"type:uuid;primary_key;default:uuid_generate_v4()" json:"id"`
 	Email           string         `json:"email"`
 	Password        string         `json:"password"`
-	Role            string         `json:"role"`
+	Role            Role           `json:"role"`
 	IsEmailVerified bool           `json:"is_verified"`
-	AccountDetails  AccountDetails `gorm:"foreignKey:Account_ID"`
+	AccountDetails  AccountDetails `gorm:"foreignKey:account_id;references:account_id"`
 
 	Timestamp
 }
