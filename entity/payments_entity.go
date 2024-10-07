@@ -13,5 +13,5 @@ type Payments struct {
 	Status             constants.PaymentStatus `json:"status"`
 	Method             constants.PaymentMethod `json:"method"`
 	BankList           BankList                `gorm:"foreignKey:Bank_ID;references:Bank_ID"`
-	registrant_ID      []EventRegistrants      `gorm:"foreignKey:registrant_id;references:registrant_id"`
+	Registrant_ID      []EventRegistrants      `gorm:"foreignKey:registrant_id;references:registrant_id"`
 }

@@ -3,7 +3,6 @@ package dto
 import (
 	"errors"
 
-	"github.com/google/uuid"
 	"github.com/pankop/event-porto/constants"
 	"github.com/pankop/event-porto/entity"
 )
@@ -18,30 +17,40 @@ const (
 
 // Error variables
 var (
-	ErrCreateregistrant     = errors.New("failed to create registrant")
-	ErrGetAllregistrant     = errors.New("failed to get all registrant")
-	ErrGetregistrantById    = errors.New("failed to get registrant by id")
-	ErrGetregistrantByEmail = errors.New("failed to get registrant by email")
-	ErrUpdateregistrant     = errors.New("failed to update registrant")
-	ErrregistrantNotFound   = errors.New("registrant not found")
+	ErrCreateregistrant             = errors.New("failed to create registrant")
+	ErrGetAllregistrant             = errors.New("failed to get all registrant")
+	ErrGetregistrantById            = errors.New("failed to get registrant by id")
+	ErrGetregistrantByEmail         = errors.New("failed to get registrant by email")
+	ErrUpdateregistrant             = errors.New("failed to update registrant")
+	ErrregistrantNotFound           = errors.New("registrant not found")
+	ErrRegistrantEmailAlreadyExists = errors.New("email already exist")
 )
 
 type (
 	RegistrantCreateRequest struct {
-		CompetitionType   constants.CompetitionType `json:"competition_type" form:"competition_type" binding:"required"`
-		RegistrantDetails []RegistrantDetail        `json:"registrant_details" form:"registrant_details"`
-		PaymentDetails    PaymentDetail             `json:"payment_details" form:"payment_details"`
+		RegistrantDetails []RegistrantDetailRequest `json:"registrant_details" form:"registrant_details"`
+		PaymentDetails    PaymentDetailRequest      `json:"payment_details" form:"payment_details"`
 	}
-	RegistrantCreateResopnse struct {
-		ID                uuid.UUID            `gorm:"type:uuid;primary_key;default:uuid_generate_v4()" json:"id"`
-		RegistrantId      string               `json:"registrant_id"`
-		Status            constants.CompStatus `json:"status" `
-		CompetitionType   constants.CompetitionType
-		RegistrantDetails []RegistrantDetail
-		PaymentDetails    PaymentDetail
+
+	RegistrantUpdateRequest struct {
+		RegistrantDetails []RegistrantDetailRequest `json:"registrant_details" form:"registrant_details"`
+		PaymentDetails    PaymentDetailRequest      `json:"payment_details" form:"payment_details"`
 	}
+
+	// Response DTOs
+	RegistrantCreateResponse struct {
+		RegistrantDetails []RegistrantDetailResponse `json:"registrant_details"`
+		PaymentDetails    PaymentDetailResponse      `json:"payment_details"`
+	}
+
+	RegistrantUpdateResponse struct {
+		Status            constants.CompStatus       `json:"status"`
+		RegistrantDetails []RegistrantDetailResponse `json:"registrant_details"`
+		PaymentDetails    PaymentDetailResponse      `json:"payment_details"`
+	}
+
 	RegistrantPaginationResponse struct {
-		Data []RegistrantCreateResopnse `json:"data"`
+		Data []RegistrantCreateResponse `json:"data"`
 		PaginationResponse
 	}
 
@@ -50,56 +59,70 @@ type (
 		PaginationResponse
 	}
 
-	RegistrantDetail struct {
-		IdentitasTim     IdentitasTim     `json:"identitas_tim" form:"identitas_tim"`
-		IdentitasKetua   IdentitasKetua   `json:"identitas_ketua" form:"identitas_ketua"`
-		IdentitasAnggota IdentitasAnggota `json:"identitas_anggota" form:"identitas_anggota"`
+	// Detail Structure for Registrant
+	RegistrantDetailRequest struct {
+		IdentitasTim     IdentitasTimRequest    `json:"identitas_tim" form:"identitas_tim"`
+		IdentitasKetua   IdentitasPersonRequest `json:"identitas_ketua" form:"identitas_ketua"`
+		IdentitasAnggota IdentitasPersonRequest `json:"identitas_anggota" form:"identitas_anggota"`
 	}
 
-	IdentitasTim struct {
-		Team_Name string `json:"team_name" form:"team_name" binding:"required" `
-		School    string `json:"school" form:"school" binding:"required" `
+	RegistrantDetailResponse struct {
+		IdentitasTim     IdentitasTimResponse    `json:"identitas_tim"`
+		IdentitasKetua   IdentitasPersonResponse `json:"identitas_ketua"`
+		IdentitasAnggota IdentitasPersonResponse `json:"identitas_anggota"`
 	}
 
-	IdentitasKetua struct {
-		Name               string `json:"name" form:"name" binding:"required" `
-		Email              string `json:"email" form:"email" binding:"required" `
-		Phone_Number       string `json:"phone_number" form:"phone_number" binding:"required"`
-		ImgIdentity        string `json:"img_identity" form:"img_identity" binding:"required" `
-		ImgFollowInstagram string `json:"img_follow_instagram" form:"img_follow_instagram" binding:"required" `
-		Link_Twibbon       string `json:"link_twibbon" form:"link_twibbon" binding:"required" `
+	IdentitasTimRequest struct {
+		TeamName string `json:"team_name" form:"team_name" binding:"required"`
+		School   string `json:"school" form:"school" binding:"required"`
 	}
 
-	IdentitasAnggota struct {
-		Name               string `json:"name" form:"name" binding:"required" `
-		Email              string `json:"email" form:"email" binding:"required" `
-		Phone_Number       string `json:"phone_number" form:"phone_number" binding:"required" `
-		ImgIdentity        string `json:"img_identity" form:"img_identity" binding:"required" `
+	IdentitasTimResponse struct {
+		AccountID string `json:"account_id"`
+		Event     string `json:"event"`
+		TeamName  string `json:"team_name"`
+		School    string `json:"school"`
+		Status    string `json:"status"`
+		Phase     string `json:"phase"`
+	}
+
+	IdentitasPersonRequest struct {
+		Name               string `json:"name" form:"name" binding:"required"`
+		Email              string `json:"email" form:"email" binding:"required"`
+		PhoneNumber        string `json:"phone_number" form:"phone_number" binding:"required"`
+		ImgIdentity        string `json:"img_identity" form:"img_identity" binding:"required"`
 		ImgFollowInstagram string `json:"img_follow_instagram" form:"img_follow_instagram" binding:"required"`
-		Link_Twibbon       string `json:"link_twibbon" form:"link_twibbon" binding:"required"`
+		LinkTwibbon        string `json:"link_twibbon" form:"link_twibbon" binding:"required"`
+		Role               string `json:"role" form:"role" binding:"required"`
 	}
 
-	PaymentDetail struct {
+	IdentitasPersonResponse struct {
+		Name               string `json:"name"`
+		Email              string `json:"email"`
+		PhoneNumber        string `json:"phone_number"`
+		ImgIdentity        string `json:"img_identity"`
+		ImgFollowInstagram string `json:"img_follow_instagram"`
+		LinkTwibbon        string `json:"link_twibbon"`
+	}
+
+	// Payment Structures
+	PaymentDetailRequest struct {
 		BankID           *int64                  `json:"bank_id" form:"bank_id" example:"null"`
-		BankTransferFrom string                  `json:"bank" form:"bank_transfer_from" binding:"required"`
-		NameTransferFrom string                  `json:"name" form:"name_transfer_from" binding:"required"`
+		BankTransferFrom string                  `json:"bank_transfer_from" form:"bank_transfer_from" binding:"required"`
+		NameTransferFrom string                  `json:"name_transfer_from" form:"name_transfer_from" binding:"required"`
 		FinalAmount      float64                 `json:"final_amount" form:"final_amount" binding:"required"`
-		PaymentMethod    constants.PaymentMethod `json:"payment_method" form:"payment_method" binding:"required" `
+		PaymentMethod    constants.PaymentMethod `json:"payment_method" form:"payment_method" binding:"required"`
 		PaymentProof     string                  `json:"payment_proof" form:"payment_proof" binding:"required"`
 	}
 
-	RegistrantUpdateRequest struct {
-		CompetitionType   constants.CompetitionType `json:"competition_type" form:"competition_type" binding:"required"`
-		RegistrantDetails []RegistrantDetail        `json:"registrant_details" form:"registrant_details"`
-		PaymentDetails    PaymentDetail             `json:"payment_details" form:"payment_details"`
-	}
-
-	RegistrantUpdateResponse struct {
-		ID                uuid.UUID `gorm:"type:uuid;primary_key;default:uuid_generate_v4()" json:"id"`
-		RegistrantId      string    `json:"registrant_id"`
-		Status            string    `json:"status" example:"pending"`
-		CompetitionType   constants.CompetitionType
-		registrantDetails []RegistrantDetail
-		PaymentDetails    PaymentDetail
+	PaymentDetailResponse struct {
+		PaymentID        string  `json:"payment_id"`
+		RegistrantID     string  `json:"registrant_id"`
+		BankTransferFrom string  `json:"bank_transfer_from"`
+		NameTransferFrom string  `json:"name_transfer_from"`
+		FinalAmount      float64 `json:"final_amount"`
+		PaymentMethod    string  `json:"payment_method"`
+		PaymentProof     string  `json:"payment_proof"`
+		Status           string  `json:"status"`
 	}
 )

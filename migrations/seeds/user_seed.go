@@ -18,21 +18,21 @@ func ListUserSeeder(db *gorm.DB) error {
 
 	jsonData, _ := io.ReadAll(jsonFile)
 
-	var listUser []entity.User
+	var listUser []entity.Account
 	if err := json.Unmarshal(jsonData, &listUser); err != nil {
 		return err
 	}
 
-	hasTable := db.Migrator().HasTable(&entity.User{})
+	hasTable := db.Migrator().HasTable(&entity.Account{})
 	if !hasTable {
-		if err := db.Migrator().CreateTable(&entity.User{}); err != nil {
+		if err := db.Migrator().CreateTable(&entity.Account{}); err != nil {
 			return err
 		}
 	}
 
 	for _, data := range listUser {
-		var user entity.User
-		err := db.Where(&entity.User{Email: data.Email}).First(&user).Error
+		var user entity.Account
+		err := db.Where(&entity.Account{Email: data.Email}).First(&user).Error
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			return err
 		}

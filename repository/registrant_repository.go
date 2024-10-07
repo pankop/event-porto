@@ -15,6 +15,7 @@ type (
 		GetAllRegistrantWithPagination(ctx context.Context, tx *gorm.DB, req dto.PaginationRequest) (dto.GetAllRegistrantRepositoryResponse, error)
 		GetRegistrantById(ctx context.Context, tx *gorm.DB, registrantId string) (entity.EventRegistrants, error)
 		GetRegistrantByEmail(ctx context.Context, tx *gorm.DB, email string) (entity.EventRegistrants, error)
+		CheckEmail(ctx context.Context, tx *gorm.DB, email string) (entity.EventRegistrants, bool, error)
 		UpdateRegistrant(ctx context.Context, tx *gorm.DB, registrant entity.EventRegistrants) (entity.EventRegistrants, error)
 		DeleteRegistrant(ctx context.Context, tx *gorm.DB, registrantId string) error
 	}
@@ -128,4 +129,17 @@ func (r *registrantRepository) DeleteRegistrant(ctx context.Context, tx *gorm.DB
 	}
 
 	return nil
+}
+
+func (r *registrantRepository) CheckEmail(ctx context.Context, tx *gorm.DB, email string) (entity.EventRegistrants, bool, error) {
+	if tx == nil {
+		tx = r.db
+	}
+
+	var registrant entity.EventRegistrants
+	if err := tx.WithContext(ctx).Where("email = ?", email).Take(&registrant).Error; err != nil {
+		return entity.EventRegistrants{}, false, err
+	}
+
+	return registrant, true, nil
 }

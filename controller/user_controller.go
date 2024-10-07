@@ -12,6 +12,7 @@ import (
 type (
 	UserController interface {
 		Register(ctx *gin.Context)
+		RegisterDetail(ctx *gin.Context)
 		Login(ctx *gin.Context)
 		Me(ctx *gin.Context)
 		GetAllUser(ctx *gin.Context)
@@ -48,6 +49,27 @@ func (c *userController) Register(ctx *gin.Context) {
 	}
 
 	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_REGISTER_USER, result)
+	ctx.JSON(http.StatusOK, res)
+}
+
+func (c *userController) RegisterDetail(ctx *gin.Context) {
+	//userId := ctx.MustGet("user_id").(string)
+
+	var user dto.UserCreateDetailsRequest
+	if err := ctx.ShouldBind(&user); err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_DATA_FROM_BODY, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	result, err := c.userService.RegisterUserDetails(ctx.Request.Context(), user)
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_REGISTER_USER, err.Error(), nil)
+		ctx.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_REGISTER_USER_DETAIL, result)
 	ctx.JSON(http.StatusOK, res)
 }
 
