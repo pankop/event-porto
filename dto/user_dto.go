@@ -34,6 +34,7 @@ const (
 	MESSAGE_SUCCESS_DELETE_USER             = "success delete user"
 	MESSAGE_SEND_VERIFICATION_EMAIL_SUCCESS = "success send verification email"
 	MESSAGE_SUCCESS_VERIFY_EMAIL            = "success verify email"
+	MESSAGE_SUCCESS_REGISTER_USER_DETAIL    = "success register user detail"
 )
 
 var (
@@ -53,25 +54,39 @@ var (
 	ErrTokenInvalid           = errors.New("token invalid")
 	ErrTokenExpired           = errors.New("token expired")
 	ErrAccountAlreadyVerified = errors.New("account already verified")
+	ErrAccountDetailsNotFound = errors.New("account details not found")
 )
 
 type (
 	UserCreateRequest struct {
-		Name         string            `json:"name" form:"name"`
-		Email        string            `json:"email" form:"email"`
-		Password     string            `json:"password" form:"password"`
-		Phone_Number string            `json:"phone_numberhone_Number" form:"phone_number"`
-		Jenjang      constants.Jenjang `json:"jenjang" form:"jenjang"`
+		Email    string `json:"email" form:"email"`
+		Password string `json:"password" form:"password"`
 	}
 
 	UserResponse struct {
 		ID              string `json:"id"`
-		Name            string `json:"name"`
 		Email           string `json:"email"`
-		Phone_Number    string `json:"phone_number"`
-		Jenjang         string `json:"jenjang"`
 		IsEmailVerified bool   `json:"is_verified"`
 		Role            string `json:"role"`
+	}
+
+	UserCreateDetailsRequest struct {
+		Account_ID   string `json:"account_id"`
+		Name         string `json:"name"`
+		Phone_Number string `json:"phone_number"`
+		Jenjang      string `json:"jenjang"`
+	}
+
+	// dto/user_response.go
+	UserDetailResponse struct {
+		ID              string            `json:"id"`
+		Name            string            `json:"name"`
+		Phone_Number    string            `json:"phone_number"`
+		Jenjang         constants.Jenjang `json:"jenjang"`
+		Account_ID      string            `json:"account_id"`
+		// Email           string            `json:"email"`             // Tambahkan field email
+		// IsEmailVerified bool              `json:"is_email_verified"` // Status verifikasi email
+		// Role            string            `json:"role"`
 	}
 
 	UserPaginationResponse struct {
@@ -85,18 +100,18 @@ type (
 	}
 
 	UserUpdateRequest struct {
-		Name       string `json:"name" form:"name"`
-		TelpNumber string `json:"telp_number" form:"telp_number"`
-		Email      string `json:"email" form:"email"`
+		Name         string `json:"name" form:"name"`
+		Phone_Number string `json:"telp_number" form:"telp_number"`
+		Email        string `json:"email" form:"email"`
 	}
 
 	UserUpdateResponse struct {
-		ID         string `json:"id"`
-		Name       string `json:"name"`
-		TelpNumber string `json:"telp_number"`
-		Role       string `json:"role"`
-		Email      string `json:"email"`
-		IsVerified bool   `json:"is_verified"`
+		ID              string `json:"id"`
+		Name            string `json:"name"`
+		Phone_Number    string `json:"telp_number"`
+		Role            string `json:"role"`
+		Email           string `json:"email"`
+		IsEmailVerified bool   `json:"is_verified"`
 	}
 
 	SendVerificationEmailRequest struct {

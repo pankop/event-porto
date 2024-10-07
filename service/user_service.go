@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/pankop/event-porto/constants"
 	"github.com/pankop/event-porto/dto"
 	"github.com/pankop/event-porto/entity"
 	"github.com/pankop/event-porto/helpers"
@@ -19,6 +20,8 @@ import (
 type (
 	UserService interface {
 		RegisterUser(ctx context.Context, req dto.UserCreateRequest) (dto.UserResponse, error)
+		RegisterUserDetails(ctx context.Context, req dto.UserCreateDetailsRequest) (dto.UserDetailResponse, error)
+		GetUserDetails(ctx context.Context, accountID string) (dto.UserDetailResponse, error)
 		GetAllUserWithPagination(ctx context.Context, req dto.PaginationRequest) (dto.UserPaginationResponse, error)
 		GetUserById(ctx context.Context, userId string) (dto.UserResponse, error)
 		GetUserByEmail(ctx context.Context, email string) (dto.UserResponse, error)
@@ -27,6 +30,7 @@ type (
 		UpdateUser(ctx context.Context, req dto.UserUpdateRequest, userId string) (dto.UserUpdateResponse, error)
 		DeleteUser(ctx context.Context, userId string) error
 		Verify(ctx context.Context, req dto.UserLoginRequest) (dto.UserLoginResponse, error)
+		RegisterAdmin(ctx context.Context, req dto.UserCreateRequest) (dto.UserResponse, error)
 	}
 
 	userService struct {
@@ -61,14 +65,10 @@ func (s *userService) RegisterUser(ctx context.Context, req dto.UserCreateReques
 	}
 
 	user := entity.Account{
-		Email:           req.Email,
-		Password:        req.Password,
-		IsEmailVerified: false,
-		AccountDetails: entity.AccountDetails{
-			Name:         req.Name,
-			Phone_Number: req.Phone_Number,
-			Jenjang:      req.Jenjang,
-		},
+		Email:      req.Email,
+		Password:   req.Password,
+		Role:       string(constants.User),
+		IsVerified: false,
 	}
 
 	userReg, err := s.userRepo.RegisterUser(ctx, nil, user)
@@ -88,11 +88,31 @@ func (s *userService) RegisterUser(ctx context.Context, req dto.UserCreateReques
 
 	return dto.UserResponse{
 		ID:              userReg.ID.String(),
-		Name:            userReg.AccountDetails.Name,
-		Phone_Number:    userReg.AccountDetails.Phone_Number,
 		Email:           userReg.Email,
-		IsEmailVerified: userReg.IsEmailVerified,
-		Role:            "User",
+		IsEmailVerified: userReg.IsVerified,
+		Role:            userReg.Role,
+	}, nil
+}
+
+func (s *userService) RegisterUserDetails(ctx context.Context, req dto.UserCreateDetailsRequest) (dto.UserDetailResponse, error) {
+	userDetails := entity.AccountDetails{
+		AccountID:    req.Account_ID,
+		Name:         req.Name,
+		Phone_Number: req.Phone_Number,
+		Jenjang:      constants.Pelajar,
+	}
+
+	userReg, err := s.userRepo.RegisterUserDetails(ctx, nil, userDetails)
+	if err != nil {
+		return dto.UserDetailResponse{}, dto.ErrCreateUser
+	}
+
+	return dto.UserDetailResponse{
+		ID:           userReg.ID.String(), // Ambil ID dari `AccountDetails`
+		Name:         userReg.Name,
+		Phone_Number: userReg.Phone_Number,
+		Jenjang:      userReg.Jenjang,
+		Account_ID:   userReg.AccountID,
 	}, nil
 }
 
@@ -188,13 +208,13 @@ func (s *userService) VerifyEmail(ctx context.Context, req dto.VerifyEmailReques
 		return dto.VerifyEmailResponse{}, dto.ErrUserNotFound
 	}
 
-	if user.IsEmailVerified {
+	if user.IsVerified {
 		return dto.VerifyEmailResponse{}, dto.ErrAccountAlreadyVerified
 	}
 
 	updatedUser, err := s.userRepo.UpdateUser(ctx, nil, entity.Account{
-		ID:              user.ID,
-		IsEmailVerified: true,
+		ID:         user.ID,
+		IsVerified: true,
 	})
 	if err != nil {
 		return dto.VerifyEmailResponse{}, dto.ErrUpdateUser
@@ -202,7 +222,24 @@ func (s *userService) VerifyEmail(ctx context.Context, req dto.VerifyEmailReques
 
 	return dto.VerifyEmailResponse{
 		Email:      email,
-		IsVerified: updatedUser.IsEmailVerified,
+		IsVerified: updatedUser.IsVerified,
+	}, nil
+}
+
+// user_service.go
+func (s *userService) GetUserDetails(ctx context.Context, accountID string) (dto.UserDetailResponse, error) {
+	// Memanggil repository untuk mengambil `AccountDetails` dan `Account`
+	userDetails, err := s.userRepo.GetUserDetails(ctx, accountID)
+	if err != nil {
+		return dto.UserDetailResponse{}, err
+	}
+
+	// Mengembalikan response yang mencakup informasi dari `AccountDetails` dan `Account`
+	return dto.UserDetailResponse{
+		ID:           userDetails.ID.String(), // Menggunakan Account_ID sebagai ID
+		Name:         userDetails.Name,
+		Phone_Number: userDetails.Phone_Number,
+		Jenjang:      userDetails.Jenjang,
 	}, nil
 }
 
@@ -215,13 +252,12 @@ func (s *userService) GetAllUserWithPagination(ctx context.Context, req dto.Pagi
 	var datas []dto.UserResponse
 	for _, user := range dataWithPaginate.Users {
 		data := dto.UserResponse{
-			ID:         user.ID.String(),
-			Name:       user.Name,
-			Email:      user.Email,
-			Role:       user.Role,
-			TelpNumber: user.TelpNumber,
-			ImageUrl:   user.ImageUrl,
-			IsVerified: user.IsVerified,
+			ID: user.ID.String(),
+			//Name:            user.AccountDetails.Name,
+			Email: user.Email,
+			Role:  user.Role,
+			//Phone_Number:    user.AccountDetails.Phone_Number,
+			IsEmailVerified: user.IsVerified,
 		}
 
 		datas = append(datas, data)
@@ -245,13 +281,13 @@ func (s *userService) GetUserById(ctx context.Context, userId string) (dto.UserR
 	}
 
 	return dto.UserResponse{
-		ID:         user.ID.String(),
-		Name:       user.Name,
-		TelpNumber: user.TelpNumber,
-		Role:       user.Role,
-		Email:      user.Email,
-		ImageUrl:   user.ImageUrl,
-		IsVerified: user.IsVerified,
+		ID: user.ID.String(),
+		//perbaiki lagi kalau mau manggil dari parameter Name dan Phone Number
+		//Name:            accountDetails.Name,
+		//Phone_Number:    accountDetails.Phone_Number,
+		Role:            user.Role,
+		Email:           user.Email,
+		IsEmailVerified: user.IsVerified,
 	}, nil
 }
 
@@ -261,14 +297,18 @@ func (s *userService) GetUserByEmail(ctx context.Context, email string) (dto.Use
 		return dto.UserResponse{}, dto.ErrGetUserByEmail
 	}
 
+	//var userDetails entity.AccountDetails
+	// userDetails, err := s.userRepo.GetUserDetails(ctx, emails.Account_ID)
+	// if err != nil {
+	// 	return dto.UserResponse{}, err
+	// }
 	return dto.UserResponse{
-		ID:         emails.ID.String(),
-		Name:       emails.Name,
-		TelpNumber: emails.TelpNumber,
-		Role:       emails.Role,
-		Email:      emails.Email,
-		ImageUrl:   emails.ImageUrl,
-		IsVerified: emails.IsVerified,
+		ID:    emails.ID.String(),
+		Email: emails.Email,
+		//Name:            userDetails.Name,
+		//Phone_Number:    userDetails.Phone_Number,
+		Role:            emails.Role,
+		IsEmailVerified: emails.IsVerified,
 	}, nil
 }
 
@@ -278,12 +318,13 @@ func (s *userService) UpdateUser(ctx context.Context, req dto.UserUpdateRequest,
 		return dto.UserUpdateResponse{}, dto.ErrUserNotFound
 	}
 
-	data := entity.User{
-		ID:         user.ID,
-		Name:       req.Name,
-		TelpNumber: req.TelpNumber,
-		Role:       user.Role,
-		Email:      req.Email,
+	data := entity.Account{
+		ID: user.ID,
+		AccountDetails: entity.AccountDetails{
+			Name:         req.Name,
+			Phone_Number: req.Phone_Number,
+		},
+		Email: req.Email,
 	}
 
 	userUpdate, err := s.userRepo.UpdateUser(ctx, nil, data)
@@ -292,12 +333,12 @@ func (s *userService) UpdateUser(ctx context.Context, req dto.UserUpdateRequest,
 	}
 
 	return dto.UserUpdateResponse{
-		ID:         userUpdate.ID.String(),
-		Name:       userUpdate.Name,
-		TelpNumber: userUpdate.TelpNumber,
-		Role:       userUpdate.Role,
-		Email:      userUpdate.Email,
-		IsVerified: user.IsVerified,
+		ID:              userUpdate.ID.String(),
+		Name:            userUpdate.AccountDetails.Name,
+		Phone_Number:    userUpdate.AccountDetails.Phone_Number,
+		Role:            userUpdate.Role,
+		Email:           userUpdate.Email,
+		IsEmailVerified: user.IsVerified,
 	}, nil
 }
 
@@ -330,10 +371,39 @@ func (s *userService) Verify(ctx context.Context, req dto.UserLoginRequest) (dto
 		return dto.UserLoginResponse{}, dto.ErrPasswordNotMatch
 	}
 
-	token := s.jwtService.GenerateToken(check.ID.String(), check.Role)
+	token := s.jwtService.GenerateToken(check.ID.String(), "User")
 
 	return dto.UserLoginResponse{
 		Token: token,
-		Role:  check.Role,
+		Role:  "User",
+	}, nil
+}
+
+func (s *userService) RegisterAdmin(ctx context.Context, req dto.UserCreateRequest) (dto.UserResponse, error) {
+	mu.Lock()
+	defer mu.Unlock()
+
+	_, flag, _ := s.userRepo.CheckEmail(ctx, nil, req.Email)
+	if flag {
+		return dto.UserResponse{}, dto.ErrEmailAlreadyExists
+	}
+
+	user := entity.Account{
+		Email:    req.Email,
+		Password: req.Password,
+	}
+
+	userReg, err := s.userRepo.RegisterUser(ctx, nil, user)
+	if err != nil {
+		return dto.UserResponse{}, dto.ErrCreateUser
+	}
+
+	return dto.UserResponse{
+		ID: userReg.ID.String(),
+		//Name:            userReg.AccountDetails.Name,
+		//Phone_Number:    userReg.AccountDetails.Phone_Number,
+		Role:            string(constants.Admin),
+		Email:           userReg.Email,
+		IsEmailVerified: userReg.IsVerified,
 	}, nil
 }

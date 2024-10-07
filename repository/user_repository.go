@@ -12,6 +12,8 @@ import (
 type (
 	UserRepository interface {
 		RegisterUser(ctx context.Context, tx *gorm.DB, user entity.Account) (entity.Account, error)
+		RegisterUserDetails(ctx context.Context, tx *gorm.DB, user entity.AccountDetails) (entity.AccountDetails, error)
+		GetUserDetails(ctx context.Context, accountID string) (entity.AccountDetails, error)
 		GetAllUserWithPagination(ctx context.Context, tx *gorm.DB, req dto.PaginationRequest) (dto.GetAllUserRepositoryResponse, error)
 		GetUserById(ctx context.Context, tx *gorm.DB, userId string) (entity.Account, error)
 		GetUserByEmail(ctx context.Context, tx *gorm.DB, email string) (entity.Account, error)
@@ -38,6 +40,18 @@ func (r *userRepository) RegisterUser(ctx context.Context, tx *gorm.DB, user ent
 
 	if err := tx.WithContext(ctx).Create(&user).Error; err != nil {
 		return entity.Account{}, err
+	}
+
+	return user, nil
+}
+
+func (r *userRepository) RegisterUserDetails(ctx context.Context, tx *gorm.DB, user entity.AccountDetails) (entity.AccountDetails, error) {
+	if tx == nil {
+		tx = r.db
+	}
+
+	if err := tx.WithContext(ctx).Create(&user).Error; err != nil {
+		return entity.AccountDetails{}, err
 	}
 
 	return user, nil
@@ -142,4 +156,18 @@ func (r *userRepository) DeleteUser(ctx context.Context, tx *gorm.DB, userId str
 	}
 
 	return nil
+}
+
+// user_repository.go
+func (r *userRepository) GetUserDetails(ctx context.Context, accountID string) (entity.AccountDetails, error) {
+	// Mengambil data dari entity `AccountDetails`
+	var userDetails entity.AccountDetails
+	err := r.db.Where("account_id = ?", accountID).First(&userDetails).Error
+	if err != nil {
+		return entity.AccountDetails{}, err
+	}
+
+	// Mengambil data dari entity `Account` berdasarkan `accountID`
+
+	return userDetails, nil
 }
