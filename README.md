@@ -82,7 +82,7 @@ This command will populate the database with initial data using the seeders defi
 
 
 ### API Documentation
-You can explore the available endpoints and their usage in the [Postman Documentation](https://documenter.getpostman.com/view/29665461/2s9YJaZQCG). This documentation provides a comprehensive overview of the API endpoints, including request and response examples, making it easier to understand how to interact with the API.
+On progress documenting API
 
 ### Issue / Pull Request Template
 
