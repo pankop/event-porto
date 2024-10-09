@@ -71,7 +71,7 @@ func (r *registrantRepository) GetAllRegistrantWithPagination(ctx context.Contex
 	totalPage := int64(math.Ceil(float64(count) / float64(req.PerPage)))
 
 	return dto.GetAllRegistrantRepositoryResponse{
-		Registrant: registrants,
+		Registrants: registrants,
 		PaginationResponse: dto.PaginationResponse{
 			Page:    req.Page,
 			PerPage: req.PerPage,

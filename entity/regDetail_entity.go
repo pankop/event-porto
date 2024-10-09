@@ -13,5 +13,5 @@ type RegistrationDetails struct {
 	ImgIdentity           string             `json:"img_identity"`
 	ImgFollowInstagram    string             `json:"img_follow_instagram"`
 	Link_Twibbon          string             `json:"link_twibbon"`
-	Registrant_ID         []EventRegistrants `gorm:"foreignKey:registrant_id;references:registrant_id"`
+	Registrant_ID            string             `json:"registrant_id"`
 }

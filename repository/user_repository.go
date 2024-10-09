@@ -44,7 +44,7 @@ func (r *userRepository) RegisterUser(ctx context.Context, tx *gorm.DB, user ent
 
 	return user, nil
 }
-
+	
 func (r *userRepository) RegisterUserDetails(ctx context.Context, tx *gorm.DB, user entity.AccountDetails) (entity.AccountDetails, error) {
 	if tx == nil {
 		tx = r.db

@@ -7,12 +7,14 @@ import (
 )
 
 type Account struct {
-	ID             uuid.UUID      `gorm:"type:uuid;primary_key;default:uuid_generate_v4()" json:"id"`
-	Email          string         `json:"email"`
-	Password       string         `json:"password"`
-	Role           string         `json:"role"`
-	IsVerified     bool           `json:"is_verified"`
-	AccountDetails AccountDetails `gorm:"foreignKey:account_id;references:id"`
+	ID               uuid.UUID          `gorm:"type:uuid;primary_key;default:uuid_generate_v4()" json:"id"`
+	Email            string             `json:"email"`
+	Password         string             `json:"password"`
+	Role             string             `json:"role"`
+	IsVerified       bool               `json:"is_verified"`
+	AccountDetails   AccountDetails     `gorm:"foreignKey:account_id;references:id"`
+	EventRegistrants []EventRegistrants `gorm:"foreignKey:account_id;references:id"`
+	ShortenLink      []ShortenLink      `gorm:"foreignKey:account_id;references:id"`
 
 	Timestamp
 }

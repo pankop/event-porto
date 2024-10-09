@@ -59,35 +59,41 @@ var (
 
 type (
 	UserCreateRequest struct {
-		Email    string `json:"email" form:"email"`
-		Password string `json:"password" form:"password"`
+		Email        string            `json:"email" form:"email"`
+		Password     string            `json:"password" form:"password"`
+		Name         string            `json:"name" form:"name"`
+		Phone_Number string            `json:"phone_number" form:"phone_number"`
+		Jenjang      constants.Jenjang `json:"jenjang" form:"jenjang"`
 	}
 
 	UserResponse struct {
-		ID              string `json:"id"`
-		Email           string `json:"email"`
-		IsEmailVerified bool   `json:"is_verified"`
-		Role            string `json:"role"`
+		ID              string            `json:"id"`
+		Email           string            `json:"email"`
+		IsEmailVerified bool              `json:"is_verified"`
+		Role            string            `json:"role"`
+		Name            string            `json:"name" form:"name"`
+		Phone_Number    string            `json:"phone_number" form:"phone_number"`
+		Jenjang         constants.Jenjang `json:"jenjang" form:"jenjang"`
 	}
 
-	UserCreateDetailsRequest struct {
-		Account_ID   string `json:"account_id"`
-		Name         string `json:"name"`
-		Phone_Number string `json:"phone_number"`
-		Jenjang      string `json:"jenjang"`
-	}
+	// UserCreateDetailsRequest struct {
+	// 	Account_ID   string `json:"account_id"`
+	// 	Name         string `json:"name"`
+	// 	Phone_Number string `json:"phone_number"`
+	// 	Jenjang      string `json:"jenjang"`
+	// }
 
 	// dto/user_response.go
-	UserDetailResponse struct {
-		ID              string            `json:"id"`
-		Name            string            `json:"name"`
-		Phone_Number    string            `json:"phone_number"`
-		Jenjang         constants.Jenjang `json:"jenjang"`
-		Account_ID      string            `json:"account_id"`
-		// Email           string            `json:"email"`             // Tambahkan field email
-		// IsEmailVerified bool              `json:"is_email_verified"` // Status verifikasi email
-		// Role            string            `json:"role"`
-	}
+	// UserDetailResponse struct {
+	// 	ID           string            `json:"id"`
+	// 	Name         string            `json:"name"`
+	// 	Phone_Number string            `json:"phone_number"`
+	// 	Jenjang      constants.Jenjang `json:"jenjang"`
+	// 	Account_ID   string            `json:"account_id"`
+	// 	// Email           string            `json:"email"`             // Tambahkan field email
+	// 	// IsEmailVerified bool              `json:"is_email_verified"` // Status verifikasi email
+	// 	// Role            string            `json:"role"`
+	// }
 
 	UserPaginationResponse struct {
 		Data []UserResponse `json:"data"`
@@ -133,13 +139,9 @@ type (
 	}
 
 	UserLoginResponse struct {
-		ID           uuid.UUID         `gorm:"type:uuid;primary_key;default:uuid_generate_v4()" json:"id"`
-		Nama         string            `json:"name"`
-		Email        string            `json:"email"`
-		Phone_Number string            `json:"phone_number"`
-		Jenjang      constants.Jenjang `json:"jenjang"`
-		Role         string            `json:"role"`
-		Token        string            `json:"token"`
+		ID    uuid.UUID `gorm:"type:uuid;primary_key;default:uuid_generate_v4()" json:"id"`
+		Role  string    `json:"role"`
+		Token string    `json:"token"`
 	}
 
 	UpdateStatusIsVerifiedRequest struct {

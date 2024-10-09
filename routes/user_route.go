@@ -12,7 +12,7 @@ func User(route *gin.Engine, userController controller.UserController, jwtServic
 	{
 		// User
 		routes.POST("", userController.Register)
-		routes.POST("/details", userController.RegisterDetail)
+		//routes.POST("/details", userController.RegisterDetail)
 		routes.GET("", userController.GetAllUser)
 		routes.POST("/login", userController.Login)
 		routes.DELETE("", middleware.Authenticate(jwtService), userController.Delete)
