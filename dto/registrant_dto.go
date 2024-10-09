@@ -29,24 +29,24 @@ var (
 type (
 	RegistrantCreateRequest struct {
 		RegistrantDetails []RegistrantDetailRequest `json:"registrant_details" form:"registrant_details"`
-		PaymentDetails    PaymentDetailRequest      `json:"payment_details" form:"payment_details"`
+		PaymentDetails    PaymentRequest            `json:"payment_details" form:"payment_details"`
 	}
 
 	RegistrantUpdateRequest struct {
 		RegistrantDetails []RegistrantDetailRequest `json:"registrant_details" form:"registrant_details"`
-		PaymentDetails    PaymentDetailRequest      `json:"payment_details" form:"payment_details"`
+		PaymentDetails    PaymentRequest            `json:"payment_details" form:"payment_details"`
 	}
 
 	// Response DTOs
 	RegistrantCreateResponse struct {
 		RegistrantDetails []RegistrantDetailResponse `json:"registrant_details"`
-		PaymentDetails    PaymentDetailResponse      `json:"payment_details"`
+		PaymentDetails    PaymentResponse            `json:"payment_details"`
 	}
 
 	RegistrantUpdateResponse struct {
 		Status            constants.CompStatus       `json:"status"`
 		RegistrantDetails []RegistrantDetailResponse `json:"registrant_details"`
-		PaymentDetails    PaymentDetailResponse      `json:"payment_details"`
+		PaymentDetails    PaymentResponse            `json:"payment_details"`
 	}
 
 	RegistrantPaginationResponse struct {
@@ -55,7 +55,7 @@ type (
 	}
 
 	GetAllRegistrantRepositoryResponse struct {
-		Registrant []entity.EventRegistrants
+		Registrants []entity.EventRegistrants
 		PaginationResponse
 	}
 
@@ -94,6 +94,7 @@ type (
 		ImgFollowInstagram string `json:"img_follow_instagram" form:"img_follow_instagram" binding:"required"`
 		LinkTwibbon        string `json:"link_twibbon" form:"link_twibbon" binding:"required"`
 		Role               string `json:"role" form:"role" binding:"required"`
+		Registrant_ID      string `json:"registrant_id" form:"registrant_id" binding:"required"`
 	}
 
 	IdentitasPersonResponse struct {
@@ -106,23 +107,33 @@ type (
 	}
 
 	// Payment Structures
-	PaymentDetailRequest struct {
-		BankID           *int64                  `json:"bank_id" form:"bank_id" example:"null"`
-		BankTransferFrom string                  `json:"bank_transfer_from" form:"bank_transfer_from" binding:"required"`
-		NameTransferFrom string                  `json:"name_transfer_from" form:"name_transfer_from" binding:"required"`
-		FinalAmount      float64                 `json:"final_amount" form:"final_amount" binding:"required"`
-		PaymentMethod    constants.PaymentMethod `json:"payment_method" form:"payment_method" binding:"required"`
-		PaymentProof     string                  `json:"payment_proof" form:"payment_proof" binding:"required"`
+	PaymentRequest struct {
+		Bank_ID           string                  `json:"bank_list"`
+		Bank_Transfer_From string                  `json:"bank_transfer_from"`
+		Name_Transfer_From string                  `json:"name_transfer_from"`
+		Amount             int64                   `json:"amount"`
+		Payment_Method     constants.PaymentMethod `json:"payment_method"`
+		Payment_Proof      string                  `json:"payment_proof"`
 	}
 
-	PaymentDetailResponse struct {
-		PaymentID        string  `json:"payment_id"`
-		RegistrantID     string  `json:"registrant_id"`
-		BankTransferFrom string  `json:"bank_transfer_from"`
-		NameTransferFrom string  `json:"name_transfer_from"`
-		FinalAmount      float64 `json:"final_amount"`
-		PaymentMethod    string  `json:"payment_method"`
-		PaymentProof     string  `json:"payment_proof"`
-		Status           string  `json:"status"`
+	PaymentResponse struct {
+		Payment_ID         string  `json:"payment_id"`
+		Registrant_ID      string  `json:"registrant_id"`
+		Bank_Transfer_From string  `json:"bank_transfer_from"`
+		Name_Transfer_From string  `json:"name_transfer_from"`
+		Amount             float64 `json:"amount"`
+		Payment_Method     string  `json:"payment_method"`
+		Payment_Proof      string  `json:"payment_proof"`
+		Status             string  `json:"status"`
+	}
+
+	PaymentPaginationResponse struct {
+		Data []PaymentResponse `json:"data"`
+		PaginationResponse
+	}
+
+	GetAllPaymentResponse struct {
+		Payments []entity.Payments
+		PaginationResponse
 	}
 )
